@@ -6,7 +6,6 @@ app = Flask(__name__)
 
 swagger = Swagger(app)
 
-# Carregando os dados
 commodities_data = load_data()
 
 @app.route('/api/commodities', methods=['GET'])
@@ -57,14 +56,19 @@ def get_commodities():
     responses:
         200:
             description: Returns the commodities data.
+        400:
+            description: Required parameter missing
+        500:
+            description: Internal server error
     """
-    # Recebendo os parâmetros
+  try:
+    # Receiving the parameters
     cod_variavel = request.args.get('cod_variavel')
     cod_produto_lavouras_temporarias = request.args.get('cod_produto_lavouras_temporarias')
     cod_ano = request.args.get('cod_ano')
     cod_municipio = request.args.get('cod_municipio')
 
-    # Filtrando os dados
+    # Filtering the data
     filtered_data = commodities_data
     if cod_variavel:
         filtered_data = filtered_data[filtered_data['cod_variavel'] == int(cod_variavel)]
@@ -75,8 +79,23 @@ def get_commodities():
     if cod_municipio:
         filtered_data = filtered_data[filtered_data['cod_municipio'] == int(cod_municipio)]
 
-    # Retornando os dados filtrados
-    return jsonify(filtered_data.to_dict(orient='records'))
+    # Returning the filtered data
+    json_output = jsonify(filtered_data.to_dict(orient='records'))
+
+  except KeyError as ke:
+      logging.error(f"Required parameter missing: {ke}")
+      json_output = jsonify({"error": f"Required parameter missing: {ke}"}), 400
+
+  except ValueError as ve:
+      logging.error(f"Value error: {ve}")
+      json_output = jsonify({"error": f"Value error: {ve}"}), 400
+
+  except Exception as e:
+      logging.error(f"An error occurred: {e}")
+      json_output = jsonify({"error": f"An error occurred: {e}"}), 500
+
+  return json_output
+
 
 if __name__ == '__main__':
-    app.run()
+  app.run()

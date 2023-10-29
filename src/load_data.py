@@ -2,7 +2,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 import os
 
-def load_data():
+def load_data() -> pd.DataFrame:
     connection_str = os.environ.get('DATABASE_URL')
     engine = create_engine(connection_str)
     
