@@ -14,6 +14,8 @@ This project provides an API that serves data related to agricultural commoditie
 
 ## Installation & Usage
 
+- This API is defined for use in the cloud and therefore requires data available in a database. Below are the instructions for running the local API, but without the availability of data.
+
 1. **Clone the Repository**
    ```
    git clone https://github.com/SamuelOliveirads/agricultural_production_analysis.git
